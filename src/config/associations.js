@@ -32,8 +32,8 @@ User.hasMany(Order, { foreignKey: 'user_id' });
 Order.belongsTo(User, { foreignKey: 'user_id' });
 
 // Order & OrderItem
-Order.hasMany(OrderItem, { foreignKey: 'order_id' });
-OrderItem.belongsTo(Order, { foreignKey: 'order_id' });
+Order.hasMany(OrderItem, { as: 'items', foreignKey: 'order_id' });
+OrderItem.belongsTo(Order, { as: 'order', foreignKey: 'order_id' });
 
 // OrderItem & Product
 OrderItem.belongsTo(Product, { foreignKey: 'product_id' });

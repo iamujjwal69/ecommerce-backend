@@ -9,7 +9,8 @@ const { sendOrderConfirmation } = require('../../utils/mailer');
 const placeOrder = async (req, res, next) => {
   try {
     const user_id = req.user.id;
-    const { shipping_address, payment_method } = req.body;
+    const { shipping_address, payment_method, email } = req.body;
+    console.log("Backend received order request body:", { shipping_address, payment_method, email });
 
     const cart = await Cart.findOne({ where: { user_id } });
     if (!cart) return res.status(400).json({ error: 'Cart is empty' });
@@ -54,7 +55,7 @@ const placeOrder = async (req, res, next) => {
     await CartItem.destroy({ where: { cart_id: cart.id } });
 
     const user = await User.findByPk(user_id);
-    const userEmail = user ? user.email : 'guest@example.com';
+    const userEmail = email || (user ? user.email : 'guest@example.com');
     sendOrderConfirmation(userEmail, order, cartItems);
 
     res.status(201).json({
@@ -78,7 +79,8 @@ const getOrder = async (req, res, next) => {
       where: { id, user_id },
       include: [{
         model: OrderItem,
-        include: [{ model: Product, attributes: ['name', 'main_image_url'] }]
+        as: 'items',
+        include: [{ model: Product, attributes: ['name', 'main_image_url', 'price'] }]
       }]
     });
 
@@ -97,7 +99,8 @@ const listUserOrders = async (req, res, next) => {
       order: [['created_at', 'DESC']],
       include: [{
         model: OrderItem,
-        include: [{ model: Product, attributes: ['name', 'main_image_url'] }]
+        as: 'items',
+        include: [{ model: Product, attributes: ['name', 'main_image_url', 'price'] }]
       }]
     });
     res.json({ orders });

@@ -25,7 +25,7 @@ async function sendOrderConfirmation(userEmail, order, items) {
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #ddd;">${i.Product?.name || 'Item'}</td>
         <td style="padding: 10px; border-bottom: 1px solid #ddd;">${i.quantity}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #ddd;">₹${Number(i.price).toLocaleString('en-IN')}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">₹${Number(i.Product?.price || 0).toLocaleString('en-IN')}</td>
       </tr>
     `).join('');
 
